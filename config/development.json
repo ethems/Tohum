@@ -1,0 +1,4 @@
+{
+  "siteRoot": "",
+  "dbUri":"mongodb://testuser:123456@ds019708.mlab.com:19708/halappdb"
+}

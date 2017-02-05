@@ -1,0 +1,4 @@
+{
+  "siteRoot": "",
+  "dbUri":"mongodb://administrator:admin@ds137139.mlab.com:37139/halcidendb"
+}
