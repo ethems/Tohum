@@ -1,0 +1,19 @@
+{
+  "name": "tohum",
+  "version": "0.0.1",
+  "description": "tohum app ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethems/Tohum.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethems/Tohum/issues"
+  },
+  "homepage": "https://github.com/ethems/Tohum#readme"
+}
