@@ -2,8 +2,12 @@
   "name": "tohum",
   "version": "0.0.1",
   "description": "tohum app ",
-  "main": "index.js",
+  "engines": {
+    "node": "6.9.5"
+  },
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,9 +15,33 @@
     "url": "git+https://github.com/ethems/Tohum.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
+  "private": "true",
   "bugs": {
     "url": "https://github.com/ethems/Tohum/issues"
   },
-  "homepage": "https://github.com/ethems/Tohum#readme"
+  "homepage": "https://github.com/ethems/Tohum#readme",
+  "dependencies": {
+    "axios": "^0.15.3",
+    "bluebird": "^3.4.7",
+    "body-parser": "^1.16.0",
+    "co": "^4.6.0",
+    "express": "^4.14.1",
+    "express-validator": "^3.1.2",
+    "lodash": "^4.17.4",
+    "moment": "^2.17.1",
+    "mongoose": "^4.8.1",
+    "winston": "^2.3.1",
+    "winston-daily-rotate-file": "^1.4.4"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-loader": "^1.6.1",
+    "eslint-plugin-flowtype": "^2.30.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0"
+  }
 }

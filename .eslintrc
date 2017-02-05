@@ -1,0 +1,39 @@
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true,
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "mocha": true,
+    "jquery" : true
+  },
+  "plugins": [
+    "react",
+    "import",
+    "flowtype"
+  ],
+  "globals": {
+    "module": true,
+    "require": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "airbnb"
+  ],
+  "rules": {
+    "generator-star-spacing": ["error", {"before": true, "after": true}],
+    "max-len": ["error", 150],
+    "func-names": ["error", "never"],
+    "comma-dangle": ["error", "never"],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/*.spec.js","**/*.config.js"]}],
+    "object-curly-spacing": ["error", "never"]
+  }
+}
