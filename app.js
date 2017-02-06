@@ -21,6 +21,7 @@ if (process.env.NODE_ENV !== 'test') {
   require('./lib/db')(config);
 }
 
+
 // STATIC FILES
 app.use(express.static('public'));
 // APP ROUTER
