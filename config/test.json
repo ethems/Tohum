@@ -1,4 +1,4 @@
 {
   "siteRoot": "",
-  "dbUri":"mongodb://localhost:auth/test-app"
+  "dbUri":"mongodb://localhost:auth/tohumdb"
 }
