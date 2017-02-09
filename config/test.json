@@ -1,4 +1,17 @@
 {
-  "siteRoot": "",
+  "app":{
+    "port":5000
+  },
+  "db":{
+    "host":"localhost",
+    "port":"auth",
+    "username":"",
+    "password":"",
+    "database":"tohumdb"
+  },
+  "log":{
+    "level":"info",
+    "directory":"log"
+  },
   "dbUri":"mongodb://localhost:auth/tohumdb"
 }
