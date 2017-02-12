@@ -4,7 +4,7 @@
   },
   "db":{
     "host":"localhost",
-    "port":"auth",
+    "port":"27017",
     "username":"",
     "password":"",
     "database":"tohumdb"
@@ -12,6 +12,5 @@
   "log":{
     "level":"info",
     "directory":"log"
-  },
-  "dbUri":"mongodb://localhost:auth/tohumdb"
+  }
 }

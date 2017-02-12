@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "description": "tohum app",
   "engines": {
-    "node": "6.9.5"
+    "node": "7.5.0"
   },
   "main": "app.js",
   "scripts": {
-    "test": "npm run test-node",
-    "test-node": "node_modules/.bin/mocha ./test",
+    "test": "cross-env NODE_ENV=test npm run test-node",
+    "test-node": "mocha ./test",
     "start": "node app.js"
   },
   "repository": {
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
+    "cross-env": "^3.1.4",
     "eslint": "^3.15.0",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-loader": "^1.6.1",
