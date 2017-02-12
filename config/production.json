@@ -12,6 +12,5 @@
   "log":{
     "level":"info",
     "directory":"log"
-  },
-  "dbUri":"mongodb://tohumuser:123456@ds143539.mlab.com:43539/tohumdb",
+  }
 }
