@@ -1,11 +1,6 @@
-<<<<<<< Updated upstream
 **/node_modules
 ./log
 .jsbeautifyrc
-=======
-# Created by .ignore support plugin (hsz.mobi)
 .gitignore
 .idea/
->>>>>>> Stashed changes
-
 *.log
