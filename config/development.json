@@ -1,7 +1,8 @@
 {
   "app":{
     "port":3000,
-    "siteRoot":""
+    "siteRoot":"",
+    "secret":"654321"
   },
   "db":{
     "host":"ds143539.mlab.com",
