@@ -1,7 +1,8 @@
 {
   "app":{
     "port":3000,
-    "siteRoot":""
+    "siteRoot":"",
+    "secret":"aThracianOfNomadic0stock"
   },
   "db":{
     "host":"ds061258.mlab.com",

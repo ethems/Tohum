@@ -21,6 +21,6 @@ if (fs.existsSync(filePath)) {
 } else {
   return process.exit(0);
 }
-nconf.get('PORT') || nconf.set('PORT', nconf.get('app:port')||3000);
+nconf.get('PORT') || nconf.set('PORT', nconf.get('app:port') || 3000);
 
 module.exports = nconf;

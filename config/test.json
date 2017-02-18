@@ -1,7 +1,8 @@
 {
   "app":{
     "port":5000,
-    "siteRoot":""
+    "siteRoot":"",
+    "secret":"123456"
   },
   "db":{
     "host":"localhost",

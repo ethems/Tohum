@@ -24,6 +24,7 @@
   "homepage": "https://github.com/ethems/Tohum#readme",
   "dependencies": {
     "axios": "^0.15.3",
+    "bcrypt": "^1.0.2",
     "bluebird": "^3.4.7",
     "body-parser": "^1.16.1",
     "co": "^4.6.0",
@@ -31,10 +32,14 @@
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "express-validator": "^3.1.2",
+    "jwt-simple": "^0.5.1",
     "lodash": "^4.17.4",
     "moment": "^2.17.1",
     "mongoose": "^4.8.2",
     "nconf": "^0.8.4",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
+    "passport-local": "^1.0.0",
     "serve-favicon": "^2.3.2",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.4.4"
