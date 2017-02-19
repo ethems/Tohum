@@ -9,7 +9,7 @@ describe('USER  MODEL', () => {
   before((done) => {
     db = require('../../lib/db')();
     db.connection.collections.users.remove();
-    db.connection.collections.users.insert({email: 'test@test.com', password: '123'});
+    db.connection.collections.users.insert({email: 'test@test.com', password: '$2a$04$0l6etVhe7cx1xm0JSp9kbOwUEIAOja5MUnUN1mKGWX3hc5ohROjOa'});
     db.connection.collections.users.insert({email: 'testbcrypt@test.com', password: '123'});
     done();
   });
@@ -83,5 +83,30 @@ describe('USER  MODEL', () => {
         done();
       });
     });
+
+    it('Should verify TRUE when enter correct email', (done) => {
+      co(function * () {
+        const user = yield User.findOne({email: 'test@test.com'}).exec();
+        should.exist(user);
+        user.comparePassword('123', (err, isMatch) => {
+          should.not.exist(err);
+          isMatch.should.be.true();
+          done();
+        });
+      });
+    });
+
+    it('Should verify FALSE when enter correct email', (done) => {
+      co(function * () {
+        const user = yield User.findOne({email: 'test@test.com'}).exec();
+        should.exist(user);
+        user.comparePassword('1234', (err, isMatch) => {
+          should.not.exist(err);
+          isMatch.should.be.false();
+          done();
+        });
+      });
+    });
+
   });
 });
