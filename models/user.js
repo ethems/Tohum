@@ -15,22 +15,25 @@ const userSchema = new Schema({
 userSchema.pre('save', function(next) {
   const user = this;
   const saltRound = 10;
-  bcrypt.genSalt(saltRound, function(err, salt) {
-    if (err) {
-      return next(err);
-    }
-    bcrypt.hash(user.password, salt, function(err, hash) {
-      if (err) {
-        return next(err);
+  if (user.isModified('password')) {
+    bcrypt.genSalt(saltRound, (err0, salt) => {
+      if (err0) {
+        return next(err0);
       }
-      user.password = hash;
-      next();
+      bcrypt.hash(user.password, salt, (err1, hash) => {
+        if (err1) {
+          return next(err1);
+        }
+        user.password = hash;
+        return next();
+      });
     });
-  });
+  }
+  next();
 });
 
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
-  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     if (err) {
       return callback(err);
     }

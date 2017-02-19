@@ -5,7 +5,7 @@ const logger = require('./lib/logger');
 const app = express();
 
 // DB SETUP
-require('./lib/db');
+require('./lib/db')();
 
 // APP ROUTER
 app.use(express.static('public'));
