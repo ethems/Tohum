@@ -21,6 +21,12 @@ if (fs.existsSync(filePath)) {
 } else {
   return process.exit(0);
 }
+// PORT
 nconf.get('PORT') || nconf.set('PORT', nconf.get('app:port') || 3000);
+// CONNECTION STRING
+const credentials = nconf.get('db:username') && nconf.get('db:password')
+  ? `${nconf.get('db:username')}:${nconf.get('db:password')}@`
+  : '';
+nconf.set('connectionString', `mongodb://${credentials}${nconf.get('db:host')}:${nconf.get('db:port')}/${nconf.get('db:database')}`)
 
 module.exports = nconf;
