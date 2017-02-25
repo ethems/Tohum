@@ -3,18 +3,19 @@ const User = require('../../models/user');
 const co = require('co');
 const sinon = require('sinon');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+const config = require('../../config');
 
 describe('USER  MODEL', () => {
-  let db;
   before((done) => {
-    db = require('../../lib/db')();
-    db.connection.collections.users.remove();
-    db.connection.collections.users.insert({email: 'test@test.com', password: '$2a$04$0l6etVhe7cx1xm0JSp9kbOwUEIAOja5MUnUN1mKGWX3hc5ohROjOa'});
-    db.connection.collections.users.insert({email: 'testbcrypt@test.com', password: '123'});
+    mongoose.connect(config.get('connectionString'));
+    mongoose.connection.collections.users.remove();
+    mongoose.connection.collections.users.insert({email: 'test@test.com', password: '$2a$04$0l6etVhe7cx1xm0JSp9kbOwUEIAOja5MUnUN1mKGWX3hc5ohROjOa'});
+    mongoose.connection.collections.users.insert({email: 'testbcrypt@test.com', password: '123'});
     done();
   });
   after((done) => {
-    db.connection.close();
+    mongoose.connection.close();
     done();
   });
 
