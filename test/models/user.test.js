@@ -5,9 +5,11 @@ const sinon = require('sinon');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const config = require('../../config');
+const bluebird = require('bluebird');
 
 describe('USER  MODEL', () => {
   before((done) => {
+    mongoose.Promise = bluebird;
     mongoose.connect(config.get('connectionString'));
     mongoose.connection.collections.users.remove();
     mongoose.connection.collections.users.insert({email: 'test@test.com', password: '$2a$04$0l6etVhe7cx1xm0JSp9kbOwUEIAOja5MUnUN1mKGWX3hc5ohROjOa'});
