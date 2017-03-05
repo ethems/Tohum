@@ -1,23 +1,25 @@
 const request = require('supertest');
-const mockery = require('mockery');
 const should = require('should');
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
-const User = require('../../models/user');
+const mockery = require('mockery');
 
 describe('BASE API', () => {
   let app;
   before((done) => {
-    mockgoose(mongoose);
-    User.create({email: 'base@api.com', password: 'xxxxx'});
+    mockery.enable({warnOnUnregistered: false});
+    const authenticationControllerMock = {
+      signup: (req, res, next) => res.sendStatus(200),
+      signin: (req, res, next) => res.sendStatus(200)
+    };
+    const dbMock = {};
+    mockery.registerMock('./lib/db', dbMock);
+    mockery.registerMock('../../controllers/authentication-controller', authenticationControllerMock);
     app = require('../../app');
     done();
   });
   after((done) => {
-    mockgoose.reset(function() {
-      app.close();
-      done()
-    });
+    mockery.disable();
+    app.close();
+    done();
   });
   describe('Signup', () => {
     it('Should return 200 when POST "/api/signup"', (done) => {
