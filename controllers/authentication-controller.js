@@ -1,4 +1,3 @@
-const co = require('co');
 const jwt = require('jwt-simple');
 const User = require('../models/user');
 
@@ -12,30 +11,30 @@ const tokenForUser = (user) => {
   }, config.get('app:secret'));
 };
 
-const signup = (req, res, next) => {
-  co(function * () {
-    const {email, password} = req.body;
-    try {
-      // See if a user with the given email exists
-      const existingUser = yield User.findOne({email}).exec();
-      // If a user with email does exits, return an error
-      if (existingUser) {
-        return res.status(422).send({error: 'Email is in use'});
-      }
-      const newUser = yield User.create({email, password});
-      res.json({token: tokenForUser(newUser)});
-    } catch (err) {
-      return next(err);
+const signup = async(req, res, next) => {
+  const {email, password} = req.body;
+  try {
+    // See if a user with the given email exists
+    const existingUser = await User.findOne({email}).exec();
+    // If a user with email does exits, return an error
+    if (existingUser) {
+      return res.status(422).send({error: 'Email is in use'});
     }
-  });
+    const newUser = await User.create({email, password});
+  } catch (err) {
+    return next(err);
+  }
 };
 
 const signin = (req, res, next) => {
   // User has already had their email and password auth'd
   // we just need to give them a token
-  return res.send({
-    token: tokenForUser(req.user)
-  });
+  try {
+      token: tokenForUser(req.user)
+    });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 module.exports = {
