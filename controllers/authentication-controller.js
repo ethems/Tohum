@@ -21,6 +21,7 @@ const signup = async(req, res, next) => {
       return res.status(422).send({error: 'Email is in use'});
     }
     const newUser = await User.create({email, password});
+    return res.json({token: tokenForUser(newUser)});
   } catch (err) {
     return next(err);
   }
@@ -30,6 +31,7 @@ const signin = (req, res, next) => {
   // User has already had their email and password auth'd
   // we just need to give them a token
   try {
+    return res.json({
       token: tokenForUser(req.user)
     });
   } catch (err) {
