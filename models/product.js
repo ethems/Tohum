@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
+const stringUtil = require('../lib/utils/string-util');
+const address = require('./subdocuments/address');
 
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    set: stringUtil.capitalize,
+    unique: true
   },
   active: {
     type: Boolean,
@@ -16,6 +20,11 @@ const productSchema = new Schema({
     type: Boolean,
     default: false
   },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'productCategorySchema'
+  },
+  address: address,
   createdDate: {
     type: Date,
     required: true

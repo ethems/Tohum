@@ -22,6 +22,11 @@ describe('BASE API', () => {
     done();
   });
   describe('Signup', () => {
+    it('Should return 400 when there are no credentials in request', (done) => {
+      request(app).post('/api/signup').expect(400).end((err, res) => {
+        done();
+      });
+    });
     it('Should return 200 when POST "/api/signup"', (done) => {
       const u = {
         email: 'base1@api.com',

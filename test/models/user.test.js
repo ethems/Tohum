@@ -110,6 +110,34 @@ describe('USER  MODEL', () => {
         });
       });
     });
+    it('Should throw exception when noncomplete ADDRESS', (done) => {
+      co(function * () {
+        try {
+          const user = yield User.findOne({email: 'test@test.com'}).exec();
+          const address = {
+            city: 'test'
+          };
+          user.addresses.push(address);
+          const uUser = yield user.save();
+        } catch (ex) {
+          done();
+        }
+      });
+    });
+    it('Should update User with ADDRESS', (done) => {
+      co(function * () {
+        const user = yield User.findOne({email: 'test@test.com'}).exec();
+        const address = {
+          streetLine1: 'test',
+          city: 'test'
+        };
+        user.addresses.push(address);
+        const uUser = yield user.save();
+        uUser.addresses.length.should.equal(1);
+        uUser.addresses[0].streetLine1.should.equal('test');
+        done();
+      });
+    });
 
   });
 });

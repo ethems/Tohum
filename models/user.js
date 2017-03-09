@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const moment = require('moment');
+const address = require('./subdocuments/address');
 
 const Schema = mongoose.Schema;
 
@@ -9,11 +11,26 @@ const userSchema = new Schema({
     unique: true,
     lowercase: true
   },
-  password: String
+  password: String,
+  addresses: [address],
+  createdDate: {
+    type: Date,
+    required: true
+  },
+  modifiedDate: Date
+});
+
+userSchema.pre('validate', function(next) {
+  const user = this;
+  if (!user.createdDate) {
+    user.createdDate = moment.utc();
+  }
+  next();
 });
 
 userSchema.pre('save', function(next) {
   const user = this;
+  user.modifiedDate = moment.utc();
   const saltRound = 10;
   if (user.isModified('password')) {
     bcrypt.genSalt(saltRound, (err0, salt) => {
