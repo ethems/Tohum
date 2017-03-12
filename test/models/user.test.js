@@ -11,10 +11,18 @@ describe('USER  MODEL', () => {
   before((done) => {
     mongoose.Promise = bluebird;
     mongoose.connect(config.get('connectionString'));
-    mongoose.connection.collections.users.remove();
-    mongoose.connection.collections.users.insert({email: 'test@test.com', password: '$2a$04$0l6etVhe7cx1xm0JSp9kbOwUEIAOja5MUnUN1mKGWX3hc5ohROjOa'});
-    mongoose.connection.collections.users.insert({email: 'testbcrypt@test.com', password: '123'});
-    done();
+    co(function*() {
+      yield User.remove();
+      yield User.collection.insert({
+        email: 'test@test.com',
+        password: '$2a$04$0l6etVhe7cx1xm0JSp9kbOwUEIAOja5MUnUN1mKGWX3hc5ohROjOa'
+      });
+      yield User.collection.insert({
+        email: 'testbcrypt@test.com',
+        password: '123'
+      });
+      done();
+    })
   });
   after((done) => {
     mongoose.connection.close();
@@ -23,7 +31,7 @@ describe('USER  MODEL', () => {
 
   describe('#Save', () => {
     it('Should create a user', (done) => {
-      co(function * () {
+      co(function*() {
         const u = {
           email: 'test1@test.com',
           password: '1234'
@@ -35,7 +43,7 @@ describe('USER  MODEL', () => {
     });
 
     it('Should throw exception when create a user with existed email', (done) => {
-      co(function * () {
+      co(function*() {
         const u = {
           email: 'test@test.com',
           password: '1234'
@@ -51,7 +59,7 @@ describe('USER  MODEL', () => {
 
     it('Should call bcrypt functions when create a user', (done) => {
       const genSaltSpy = sinon.spy(bcrypt, 'genSalt');
-      co(function * () {
+      co(function*() {
         const u = {
           email: 'test2@test.com',
           password: '1234'
@@ -65,9 +73,13 @@ describe('USER  MODEL', () => {
 
     it('Should NOT call bcrypt functions when update a user', (done) => {
       const genSaltSpy = sinon.spy(bcrypt, 'genSalt');
-      co(function * () {
-        const user = yield User.findOne({email: 'testbcrypt@test.com'}).exec();
-        yield user.save({email: 'test3@test.com'});
+      co(function*() {
+        const user = yield User.findOne({
+          email: 'testbcrypt@test.com'
+        }).exec();
+        yield user.save({
+          email: 'test3@test.com'
+        });
         genSaltSpy.called.should.be.false();
         genSaltSpy.restore();
         done();
@@ -77,8 +89,10 @@ describe('USER  MODEL', () => {
   describe('#Compare', () => {
     it('Should call bcrypt compare when call "comparePassword" function', (done) => {
       const compareSpy = sinon.spy(bcrypt, 'compare');
-      co(function * () {
-        const user = yield User.findOne({email: 'test@test.com'}).exec();
+      co(function*() {
+        const user = yield User.findOne({
+          email: 'test@test.com'
+        }).exec();
         should.exist(user);
         user.comparePassword('xxx', () => {});
         compareSpy.called.should.be.true();
@@ -88,8 +102,10 @@ describe('USER  MODEL', () => {
     });
 
     it('Should verify TRUE when enter correct email', (done) => {
-      co(function * () {
-        const user = yield User.findOne({email: 'test@test.com'}).exec();
+      co(function*() {
+        const user = yield User.findOne({
+          email: 'test@test.com'
+        }).exec();
         should.exist(user);
         user.comparePassword('123', (err, isMatch) => {
           should.not.exist(err);
@@ -100,8 +116,10 @@ describe('USER  MODEL', () => {
     });
 
     it('Should verify FALSE when enter correct email', (done) => {
-      co(function * () {
-        const user = yield User.findOne({email: 'test@test.com'}).exec();
+      co(function*() {
+        const user = yield User.findOne({
+          email: 'test@test.com'
+        }).exec();
         should.exist(user);
         user.comparePassword('1234', (err, isMatch) => {
           should.not.exist(err);
@@ -111,9 +129,11 @@ describe('USER  MODEL', () => {
       });
     });
     it('Should throw exception when noncomplete ADDRESS', (done) => {
-      co(function * () {
+      co(function*() {
         try {
-          const user = yield User.findOne({email: 'test@test.com'}).exec();
+          const user = yield User.findOne({
+            email: 'test@test.com'
+          }).exec();
           const address = {
             city: 'test'
           };
@@ -125,8 +145,10 @@ describe('USER  MODEL', () => {
       });
     });
     it('Should update User with ADDRESS', (done) => {
-      co(function * () {
-        const user = yield User.findOne({email: 'test@test.com'}).exec();
+      co(function*() {
+        const user = yield User.findOne({
+          email: 'test@test.com'
+        }).exec();
         const address = {
           streetLine1: 'test',
           city: 'test'

@@ -3,4 +3,6 @@
 .jsbeautifyrc
 .gitignore
 .idea/
+.vscode
 *.log
+

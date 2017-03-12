@@ -13,12 +13,12 @@ const productCategorySchema = new Schema({
   },
   parent: {
     type: Schema.Types.ObjectId,
-    ref: 'productCategorySchema'
+    ref: 'productCategory'
   },
   ancestors: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'productCategorySchema'
+      ref: 'productCategory'
     }
   ],
   createdDate: {
