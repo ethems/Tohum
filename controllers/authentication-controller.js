@@ -19,7 +19,7 @@ const signup = async(req, res, next) => {
   try {
     // See if a user with the given email exists
     const existingUser = await User.findOne({
-      email
+      email: email.toLowerCase()
     }).exec();
     // If a user with email does exits, return an error
     if (existingUser) {

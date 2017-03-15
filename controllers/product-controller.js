@@ -9,7 +9,9 @@ const getProduct = async(req, res, next) => {
     if (foundProduct) {
       return res.json(foundProduct);
     }
-    throw new Error(`There is no product with ${id}`);
+    const error = new Error(`There is no product with ${id}`);
+    error.statusCode = 400;
+    throw error;
   } catch (err) {
     return next(err);
   }
@@ -27,7 +29,9 @@ const postProduct = async(req, res, next) => {
     if (createdProduct) {
       return res.json(createdProduct);
     }
-    throw new Error(`Product creation error ${creatingProduct}`);
+    const error = new Error(`Product creation error ${creatingProduct}`);
+    error.statusCode = 400;
+    throw error;
   } catch (err) {
     return next(err);
   }
@@ -53,7 +57,9 @@ const putProduct = async(req, res, next) => {
     if (updatedProduct) {
       return res.json(updatedProduct);
     }
-    throw new Error(`Product update error ${updatingProduct}`);
+    const error = new Error(`Product update error ${updatingProduct}`);
+    error.statusCode = 400;
+    throw error;
   } catch (err) {
     return next(err);
   }

@@ -3,11 +3,11 @@ const User = require('../../models/user');
 const ProductCategory = require('../../models/product-category');
 const Product = require('../../models/product');
 const co = require('co');
-const sinon = require('sinon');
 const mongoose = require('mongoose');
 const config = require('../../config');
 const bluebird = require('bluebird');
 const httpMocks = require('node-mocks-http');
+const ProductController = require('../../controllers/product-controller');
 
 
 
@@ -46,7 +46,16 @@ describe('PRODUCT CONTROLLER', () => {
     done();
   });
   describe('GetProduct', () => {
-    it('Should return 400 when there are no credentials in request', (done) => {
+    it('Should return Product', (done) => {
+      let request = httpMocks.createRequest({
+        method: 'GET',
+        params: {
+          id: 1
+        }
+      });
+      let response = httpMocks.createResponse();
+      ProductController.getProduct(request, response, () => {});
+      console.log(response);
       done();
     });
   });

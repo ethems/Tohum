@@ -12,6 +12,10 @@ const userSchema = new Schema({
     lowercase: true
   },
   password: String,
+  admin: {
+    type: Boolean,
+    default: false
+  },
   addresses: [address],
   createdDate: {
     type: Date,
@@ -20,7 +24,7 @@ const userSchema = new Schema({
   modifiedDate: Date
 });
 
-userSchema.pre('validate', function (next) {
+userSchema.pre('validate', function(next) {
   const user = this;
   if (!user.createdDate) {
     user.createdDate = moment.utc();
@@ -28,7 +32,7 @@ userSchema.pre('validate', function (next) {
   next();
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function(next) {
   const user = this;
   user.modifiedDate = moment.utc();
   const saltRound = 10;
@@ -45,11 +49,12 @@ userSchema.pre('save', function (next) {
         return next();
       });
     });
+  } else {
+    next();
   }
-  next();
 });
 
-userSchema.methods.comparePassword = function (candidatePassword, callback) {
+userSchema.methods.comparePassword = function(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     if (err) {
       return callback(err);
