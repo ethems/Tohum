@@ -24,7 +24,7 @@ describe('PRODUCT  MODEL', () => {
         password: '123'
       });
       done();
-    })
+    });
   });
 
   after((done) => {
