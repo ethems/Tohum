@@ -17,6 +17,20 @@ const getProduct = async(req, res, next) => {
   }
 };
 
+const deleteProduct = async(req, res, next) => {
+  const {
+    id
+  } = req.query;
+  try {
+    await Product.remove({
+      _id: id
+    }).exec();
+    return res.sendStatus(200);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const postProduct = async(req, res, next) => {
   const {
     user
@@ -68,5 +82,6 @@ const putProduct = async(req, res, next) => {
 module.exports = {
   getProduct,
   postProduct,
-  putProduct
+  putProduct,
+  deleteProduct
 };

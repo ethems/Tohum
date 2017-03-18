@@ -5,7 +5,9 @@ const logger = require('../lib/logger');
 
 async function buildSubgraph(root) {
   let nodesByParent = new Map();
-  const nodes = await ProductCategory.find({ancestors: root._id});
+  const nodes = await ProductCategory.find({
+    ancestors: root._id
+  });
   for (let i = 0, len = nodes.length; i < len; i++) {
     const parentNodeValue = nodesByParent.get(nodes[i].parent);
     if (!parentNodeValue) {
@@ -20,9 +22,9 @@ async function buildSubgraph(root) {
   return nodesByParent;
 }
 async function updateNodeAndDescendents(nodesByParent, node, parent) {
-  const parentAncestors = parent
-    ? parent.ancestors
-    : [];
+  const parentAncestors = parent ?
+    parent.ancestors :
+    [];
   await ProductCategory.update({
     _id: node._id
   }, {
@@ -40,6 +42,17 @@ async function updateNodeAndDescendents(nodesByParent, node, parent) {
   }
 }
 module.exports = {
+  removeCategory: async function(id) {
+    // This is not done !!!!!!!!!!!!!!!!;
+    await ProductCategory.update({
+      _id: id
+    }, {
+      $set: {
+        ancestors: [],
+        parent: null
+      }
+    }).exec();
+  },
   addCategory: async function(id, parentId) {
     // Use when category dont have any children categories
     // It is ideal when first initialization of the category
@@ -52,9 +65,9 @@ module.exports = {
       logger.error('There is no parent category to add new category');
       throw new Error('There is no parent category to add new category');
     }
-    const parentAncestors = parent
-      ? parent.ancestors
-      : [];
+    const parentAncestors = parent ?
+      parent.ancestors :
+      [];
     await ProductCategory.update({
       _id: id
     }, {
