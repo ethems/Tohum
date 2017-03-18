@@ -23,17 +23,17 @@ async function buildSubgraph(root) {
 }
 async function updateNodeAndDescendents(nodesByParent, node, parent) {
   const parentAncestors = parent ?
-    parent.ancestors :
-    [];
+    parent.ancestors : [];
+  const parentId = parent ? parent.id : null;
   await ProductCategory.update({
     _id: node._id
   }, {
     $set: {
       ancestors: [
         ...parentAncestors,
-        parent._id
+        parentId
       ],
-      parent: parent._id
+      parent: parentId
     }
   }).exec();
   const parentNodeValue = nodesByParent.get(node._id) || [];
@@ -43,15 +43,9 @@ async function updateNodeAndDescendents(nodesByParent, node, parent) {
 }
 module.exports = {
   removeCategory: async function(id) {
-    // This is not done !!!!!!!!!!!!!!!!;
-    await ProductCategory.update({
-      _id: id
-    }, {
-      $set: {
-        ancestors: [],
-        parent: null
-      }
-    }).exec();
+    const category = await ProductCategory.findById(id).exec();
+    const flattenCategoriesByParent = await buildSubgraph(category);
+    await updateNodeAndDescendents(flattenCategoriesByParent, category, null);
   },
   addCategory: async function(id, parentId) {
     // Use when category dont have any children categories
@@ -66,8 +60,7 @@ module.exports = {
       throw new Error('There is no parent category to add new category');
     }
     const parentAncestors = parent ?
-      parent.ancestors :
-      [];
+      parent.ancestors : [];
     await ProductCategory.update({
       _id: id
     }, {
