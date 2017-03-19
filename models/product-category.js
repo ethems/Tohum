@@ -13,14 +13,12 @@ const productCategorySchema = new Schema({
   },
   parent: {
     type: Schema.Types.ObjectId,
-    ref: 'productCategorySchema'
+    ref: 'productCategory'
   },
-  ancestors: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'productCategorySchema'
-    }
-  ],
+  ancestors: [{
+    type: Schema.Types.ObjectId,
+    ref: 'productCategory'
+  }],
   createdDate: {
     type: Date,
     required: true
@@ -37,10 +35,26 @@ productCategorySchema.pre('validate', function(next) {
 });
 productCategorySchema.pre('save', function(next) {
   const productCategory = this;
+  productCategory.name = productCategory.name.trim();
   productCategory.modifiedDate = moment.utc();
   next();
 });
 
+
+productCategorySchema.statics.findByIdAndPopulate = function(productCategoryId) {
+  return this.findById(productCategoryId).populate({
+    path: 'parent',
+    model: 'ProductCategory'
+  }).populate({
+    path: 'ancestors',
+    model: 'ProductCategory'
+  });
+};
+
 const ProductCategoryModel = mongoose.model('ProductCategory', productCategorySchema);
+
+
+
+
 
 module.exports = ProductCategoryModel;

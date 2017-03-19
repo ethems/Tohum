@@ -12,16 +12,28 @@ const tokenForUser = (user) => {
 };
 
 const signup = async(req, res, next) => {
-  const {email, password} = req.body;
+  const {
+    email,
+    password
+  } = req.body;
   try {
     // See if a user with the given email exists
-    const existingUser = await User.findOne({email}).exec();
+    const existingUser = await User.findOne({
+      email: email.toLowerCase()
+    }).exec();
     // If a user with email does exits, return an error
     if (existingUser) {
-      return res.status(422).send({error: 'Email is in use'});
+      return res.status(422).send({
+        error: 'Email is in use'
+      });
     }
-    const newUser = await User.create({email, password});
-    return res.json({token: tokenForUser(newUser)});
+    const newUser = await User.create({
+      email,
+      password
+    });
+    return res.json({
+      token: tokenForUser(newUser)
+    });
   } catch (err) {
     return next(err);
   }

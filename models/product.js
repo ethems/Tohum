@@ -22,9 +22,18 @@ const productSchema = new Schema({
   },
   category: {
     type: Schema.Types.ObjectId,
-    ref: 'productCategorySchema'
+    ref: 'ProductCategory',
+    required: true
   },
-  address: address,
+  address: {
+    type: address,
+    required: true
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   createdDate: {
     type: Date,
     required: true

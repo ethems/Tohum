@@ -10,7 +10,9 @@ const localLogin = new LocalStrategy(localOptions, async(email, password, done) 
   // if it is the correct email and password
   // otherwise , call done with false
   try {
-    const existingUser = await User.findOne({email}).exec();
+    const existingUser = await User.findOne({
+      email: email.toLowerCase()
+    }).exec();
     if (existingUser) {
       // Return done(null, existingUser);
       existingUser.comparePassword(password, (err, isMatch) => {
@@ -20,13 +22,15 @@ const localLogin = new LocalStrategy(localOptions, async(email, password, done) 
         if (!isMatch) {
           return done(null, false);
         }
-        return (null, existingUser);
+        return done(null, existingUser);
       });
+    } else {
+      return done(null, false);
     }
-    return done(null, false);
   } catch (err) {
     return done(err, false);
   }
 });
+
 
 module.exports = localLogin;

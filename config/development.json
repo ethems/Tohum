@@ -5,6 +5,13 @@
     "secret":"654321"
   },
   "db":{
+     "host":"localhost",
+    "port":"27017",
+    "username":"",
+    "password":"",
+    "database":"tohumdb-development"
+  },
+  "db_mlab":{
     "host":"ds143539.mlab.com",
     "port":43539,
     "username":"tohumuser",
@@ -16,3 +23,4 @@
     "directory":"log"
   }
 }
+

@@ -5,7 +5,10 @@ const mockery = require('mockery');
 describe('BASE API', () => {
   let app;
   before((done) => {
-    mockery.enable({warnOnUnregistered: false});
+    mockery.enable({
+      warnOnUnregistered: false,
+      useCleanCache: true
+    });
     const authenticationControllerMock = {
       signup: (req, res, next) => res.sendStatus(200),
       signin: (req, res, next) => res.sendStatus(200)

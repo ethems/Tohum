@@ -12,6 +12,10 @@ const userSchema = new Schema({
     lowercase: true
   },
   password: String,
+  admin: {
+    type: Boolean,
+    default: false
+  },
   addresses: [address],
   createdDate: {
     type: Date,
@@ -45,8 +49,9 @@ userSchema.pre('save', function(next) {
         return next();
       });
     });
+  } else {
+    next();
   }
-  next();
 });
 
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
