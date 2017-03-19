@@ -5,10 +5,10 @@ const productCategoryService = require('../services/product-category-service');
 const getProductCategory = async(req, res, next) => {
   const {
     id
-  } = req.query;
+  } = req.params;
   try {
       // Find ProductCategory
-    const foundProductCategory = await ProductCategory.findById(id).exec();
+    const foundProductCategory = await ProductCategory.findByIdAndPopulate(id).exec();
     // Check found product Category
     if (foundProductCategory) {
       return res.json(foundProductCategory);
@@ -21,20 +21,7 @@ const getProductCategory = async(req, res, next) => {
   }
 };
 
-const deleteProductCategory = async(req, res, next) => {
-  const {
-    id
-  } = req.query;
-  try {
-      // Delete ProductCategory
-    await ProductCategory.remove({
-      _id:id
-    }).exec();
-    return res.sendStatus(200);
-  } catch (err) {
-    return next(err);
-  }
-};
+
 
 const postProductCategory = async(req, res, next) => {
     // newParentId is for new parentId
@@ -51,7 +38,7 @@ const postProductCategory = async(req, res, next) => {
         // Update parent ,and ancestors
       await productCategoryService.addCategory(createdCategory._id, newParentId);
     }
-    const foundProductCategory = await ProductCategory.findById(createdCategory._id).exec();
+    const foundProductCategory = await ProductCategory.findByIdAndPopulate(createdCategory._id).exec();
     return res.json(foundProductCategory);
   } catch (err) {
     return next(err);
@@ -61,7 +48,7 @@ const postProductCategory = async(req, res, next) => {
 const putProductCategory = async(req, res, next) => {
   const {
     id
-  } = req.query;
+  } = req.params;
   const {
     newParentId
   } = req.body;
@@ -87,9 +74,9 @@ const putProductCategory = async(req, res, next) => {
       }
     } else if (newParentId === null) {
         // if intentianly newParentId is null , remove ancestors and parent
-      await productCategoryService.removeCategory(id);
+      await productCategoryService.removeParentCategory(id);
     }
-    const foundProductCategory = await ProductCategory.findById(id).exec();
+    const foundProductCategory = await ProductCategory.findByIdAndPopulate(id).exec();
     return res.json(foundProductCategory);
   } catch (err) {
     return next(err);
@@ -101,6 +88,5 @@ const putProductCategory = async(req, res, next) => {
 module.exports = {
   getProductCategory,
   postProductCategory,
-  putProductCategory,
-  deleteProductCategory
+  putProductCategory
 };

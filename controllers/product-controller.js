@@ -3,7 +3,7 @@ const Product = require('../models/product');
 const getProduct = async(req, res, next) => {
   const {
     id
-  } = req.query;
+  } = req.params;
   try {
     const foundProduct = await Product.findById(id).exec();
     if (foundProduct) {
@@ -20,7 +20,7 @@ const getProduct = async(req, res, next) => {
 const deleteProduct = async(req, res, next) => {
   const {
     id
-  } = req.query;
+  } = req.params;
   try {
     await Product.remove({
       _id: id
@@ -54,7 +54,7 @@ const postProduct = async(req, res, next) => {
 const putProduct = async(req, res, next) => {
   const {
     id
-  } = req.query;
+  } = req.params;
   const {
     user
   } = req;

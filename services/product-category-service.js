@@ -42,7 +42,7 @@ async function updateNodeAndDescendents(nodesByParent, node, parent) {
   }
 }
 module.exports = {
-  removeCategory: async function(id) {
+  removeParentCategory: async function(id) {
     const category = await ProductCategory.findById(id).exec();
     const flattenCategoriesByParent = await buildSubgraph(category);
     await updateNodeAndDescendents(flattenCategoriesByParent, category, null);

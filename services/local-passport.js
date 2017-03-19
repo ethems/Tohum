@@ -32,4 +32,5 @@ const localLogin = new LocalStrategy(localOptions, async(email, password, done) 
   }
 });
 
+
 module.exports = localLogin;
