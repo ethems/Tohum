@@ -7,7 +7,7 @@ const getProductCategory = async(req, res, next) => {
     id
   } = req.params;
   try {
-      // Find ProductCategory
+    // Find ProductCategory
     const foundProductCategory = await ProductCategory.findByIdAndPopulate(id).exec();
     // Check found product Category
     if (foundProductCategory) {
@@ -24,7 +24,7 @@ const getProductCategory = async(req, res, next) => {
 
 
 const postProductCategory = async(req, res, next) => {
-    // newParentId is for new parentId
+  // newParentId is for new parentId
   const {
     name,
     newParentId
@@ -32,10 +32,10 @@ const postProductCategory = async(req, res, next) => {
   // create with just name property
   const creatingProductCategory = _.pick(req.body, ['name']);
   try {
-      // create ProductCategory
+    // create ProductCategory
     const createdCategory = await ProductCategory.create(creatingProductCategory);
     if (newParentId) {
-        // Update parent ,and ancestors
+      // Update parent ,and ancestors
       await productCategoryService.addCategory(createdCategory._id, newParentId);
     }
     const foundProductCategory = await ProductCategory.findByIdAndPopulate(createdCategory._id).exec();
@@ -59,25 +59,49 @@ const putProductCategory = async(req, res, next) => {
     upsert: false
   };
   try {
-      // update ProductCategory
+    // update ProductCategory
     const updatedProduct = await ProductCategory.findOneAndUpdate({
       _id: id
     }, updatingProductCategory, updateOptions);
     if (newParentId) {
-        // if there is newParentId,  update parent and ancestors 
+      // if there is newParentId,  update parent and ancestors 
       if (updatedProduct.parent) {
-          // if existed parent , update parent and ancestors
+        // if existed parent , update parent and ancestors
         await productCategoryService.updateCategory(id, newParentId);
       } else {
-          // if there is no existed parent , add parent and ancestors
+        // if there is no existed parent , add parent and ancestors
         await productCategoryService.addCategory(id, newParentId);
       }
     } else if (newParentId === null) {
-        // if intentianly newParentId is null , remove ancestors and parent
+      // if intentianly newParentId is null , remove ancestors and parent
       await productCategoryService.removeParentCategory(id);
     }
     const foundProductCategory = await ProductCategory.findByIdAndPopulate(id).exec();
     return res.json(foundProductCategory);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const deleteProductCategory = async(req, res, next) => {
+  // Delete ProductCategory , only if it doesnt have any children , or  grandchildren
+  const {
+    id
+  } = req.params;
+  try {
+    const foundProductCategories = await ProductCategory.find({
+      ancestors: id
+    }).exec();
+    if (foundProductCategories && foundProductCategories.length >0) {
+      const error = new Error(`This productCategory ${id} can not be deleted`);
+      error.statusCode = 400;
+      throw error;
+    } else {
+      await ProductCategory.find({
+        _id: id
+      }).remove().exec();
+      return res.sendStatus(202);
+    }
   } catch (err) {
     return next(err);
   }
@@ -88,5 +112,6 @@ const putProductCategory = async(req, res, next) => {
 module.exports = {
   getProductCategory,
   postProductCategory,
-  putProductCategory
+  putProductCategory,
+  deleteProductCategory
 };
