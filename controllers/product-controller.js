@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const Product = require('../models/product');
+const createError = require('http-errors');
+
 
 const getProduct = async(req, res, next) => {
   const {
@@ -10,31 +12,38 @@ const getProduct = async(req, res, next) => {
     if (foundProduct) {
       return res.json(foundProduct);
     }
-    const error = new Error(`There is no product with ${id}`);
-    error.statusCode = 400;
-    throw error;
+    throw createError(400, `There is no product with ${id}`);
   } catch (err) {
     return next(err);
   }
 };
 
 const deleteProduct = async(req, res, next) => {
+  // soft-delete
   const {
     user
   } = req;
   const {
     id
   } = req.params;
+  const opts = {
+    new: true,
+    upsert: false
+  };
   try {
-    await Product.findOneAndUpdate({
+    const deletedProduct = await Product.findOneAndUpdate({
       _id: id,
       owner: user._id
     }, {
       $set: {
         isDeleted: true
       }
-    }).exec();
-    return res.sendStatus(200);
+    }, opts).exec();
+    if (deletedProduct) {
+      return res.sendStatus(202);
+    } else {
+      throw createError(400, `There is no product with ${id}`);
+    }
   } catch (err) {
     return next(err);
   }
@@ -53,9 +62,7 @@ const postProduct = async(req, res, next) => {
     if (createdProduct) {
       return res.json(createdProduct);
     }
-    const error = new Error(`Product creation error ${creatingProduct}`);
-    error.statusCode = 400;
-    throw error;
+    throw createError(400, `Product creation error ${creatingProduct}`);
   } catch (err) {
     return next(err);
   }
@@ -70,7 +77,7 @@ const putProduct = async(req, res, next) => {
   } = req;
   const requestBody = _.pick(req.body, ['name', 'active', 'category', 'address']);
   const updatingProduct = requestBody;
-  const updateOptions = {
+  const opts = {
     new: true,
     upsert: false
   };
@@ -79,13 +86,11 @@ const putProduct = async(req, res, next) => {
     const updatedProduct = await Product.findOneAndUpdate({
       _id: id,
       owner: user._id
-    }, updatingProduct, updateOptions);
+    }, updatingProduct, opts);
     if (updatedProduct) {
       return res.json(updatedProduct);
     }
-    const error = new Error(`Product update error ${updatingProduct}`);
-    error.statusCode = 400;
-    throw error;
+    throw createError(400, `Product update error ${updatingProduct}`);
   } catch (err) {
     return next(err);
   }
@@ -114,9 +119,7 @@ const patchProduct = async(req, res, next) => {
     if (updatedProduct) {
       return res.json(updatedProduct);
     }
-    const error = new Error(`Product update error ${updatingProduct}`);
-    error.statusCode = 400;
-    throw error;
+    throw createError(400, `Product update error ${updatingProduct}`);
   } catch (err) {
     return next(err);
   }
