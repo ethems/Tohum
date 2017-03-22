@@ -13,10 +13,13 @@ const productSchema = new Schema({
     unique: true
   },
   active: {
+    // Product might be active or inactive in its lifetime.
+    // This property coordicates show or hide
     type: Boolean,
     default: true
   },
   isDeleted: {
+    // Soft delete
     type: Boolean,
     default: false
   },
@@ -49,6 +52,7 @@ productSchema.pre('validate', function(next) {
 });
 productSchema.pre('save', function(next) {
   const product = this;
+  product.name = product.name.trim();
   product.modifiedDate = moment.utc();
   next();
 });
