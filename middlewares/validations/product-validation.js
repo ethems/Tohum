@@ -49,6 +49,9 @@ exports.deleteProduct = async(req, res, next) => {
 
 exports.patchProduct = async(req, res, next) => {
   req.checkParams('id').notEmpty().isObjectId();
+  req.checkBody('name').optional().notEmpty();
+  req.checkBody('category').optional().notEmpty();
+  req.checkBody('address').optional().isAddress();
   const errors = await req.getValidationResult();
   if (!errors.isEmpty()) {
     return res.status(400).json({

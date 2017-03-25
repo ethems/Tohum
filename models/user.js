@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const address = require('./subdocuments/address');
+const stringUtil = require('../lib/utils/string-util');
+
 
 const Schema = mongoose.Schema;
 
@@ -15,6 +17,20 @@ const userSchema = new Schema({
   admin: {
     type: Boolean,
     default: false
+  },
+  name: {
+    primaryName: {
+      type: String,
+      set: stringUtil.capitalize,
+    },
+    middleName: {
+      type: String,
+      set: stringUtil.capitalize,
+    },
+    lastName: {
+      type: String,
+      set: stringUtil.capitalize,
+    }
   },
   addresses: [address],
   createdDate: {
@@ -62,6 +78,16 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     callback(null, isMatch);
   });
 };
+
+userSchema.statics.safeFindById = function(id) {
+  const user = this;
+  const safeProjection = {
+    password: false,
+    __v: false
+  };
+  return user.findById(id, safeProjection);
+};
+
 
 const UserModel = mongoose.model('User', userSchema);
 
