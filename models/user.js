@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const address = require('./subdocuments/address');
+const stringUtil = require('../lib/utils/string-util');
+const createError = require('http-errors');
+
 
 const Schema = mongoose.Schema;
 
@@ -16,6 +19,20 @@ const userSchema = new Schema({
     type: Boolean,
     default: false
   },
+  name: {
+    primaryName: {
+      type: String,
+      set: stringUtil.capitalize,
+    },
+    middleName: {
+      type: String,
+      set: stringUtil.capitalize,
+    },
+    lastName: {
+      type: String,
+      set: stringUtil.capitalize,
+    }
+  },
   addresses: [address],
   createdDate: {
     type: Date,
@@ -24,6 +41,8 @@ const userSchema = new Schema({
   modifiedDate: Date
 });
 
+
+// Hooks
 userSchema.pre('validate', function(next) {
   const user = this;
   if (!user.createdDate) {
@@ -54,6 +73,18 @@ userSchema.pre('save', function(next) {
   }
 });
 
+// Static methods
+userSchema.statics.safeFindById = function(id) {
+  const user = this;
+  const safeProjection = {
+    password: false,
+    __v: false
+  };
+  return user.findById(id, safeProjection);
+};
+
+// Instance methods
+
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     if (err) {
@@ -62,6 +93,36 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     callback(null, isMatch);
   });
 };
+
+userSchema.methods.updateEmail = function(email) {
+  if (typeof email === 'undefined') {
+    return;
+  } else if (email === null) {
+    throw new createError.BadRequest();
+  }
+  this.email = email;
+};
+userSchema.methods.updatePassword = function(password) {
+  if (typeof password === 'undefined') {
+    return;
+  } else if (password === null) {
+    throw new createError.BadRequest();
+  }
+  this.password = password;
+};
+userSchema.methods.updateName = function(name) {
+  if (typeof name === 'undefined') {
+    return;
+  }
+  this.name = name;
+};
+userSchema.methods.updateAddresses = function(addresses) {
+  if (typeof addresses === 'undefined') {
+    return;
+  }
+  this.addresses = addresses;
+};
+
 
 const UserModel = mongoose.model('User', userSchema);
 

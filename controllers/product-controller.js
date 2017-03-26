@@ -76,17 +76,17 @@ const putProduct = async(req, res, next) => {
     user
   } = req;
   const requestBody = _.pick(req.body, ['name', 'active', 'category', 'address']);
-  const updatingProduct = requestBody;
-  const opts = {
-    new: true,
-    upsert: false
-  };
   try {
     // Owner is importnat because another user might update anothers' products  
-    const updatedProduct = await Product.findOneAndUpdate({
+    const updatingProduct = await Product.findOne({
       _id: id,
       owner: user._id
-    }, updatingProduct, opts);
+    }).exec();
+    updatingProduct.updateName(requestBody.name);
+    updatingProduct.updateActive(requestBody.active);
+    updatingProduct.updateCategory(requestBody.category);
+    updatingProduct.updateAddress(requestBody.address);
+    const updatedProduct = await updatingProduct.save();
     if (updatedProduct) {
       return res.json(updatedProduct);
     }
@@ -96,39 +96,11 @@ const putProduct = async(req, res, next) => {
   }
 };
 
-const patchProduct = async(req, res, next) => {
-  // PATCH and PUT are same functions , in the future they might be changed.
-  const {
-    id
-  } = req.params;
-  const {
-    user
-  } = req;
-  const requestBody = _.pick(req.body, ['name', 'active', 'category', 'address']);
-  const updatingProduct = requestBody;
-  const updateOptions = {
-    new: true,
-    upsert: false
-  };
-  try {
-    // Owner is important  because another user might update anothers' products  
-    const updatedProduct = await Product.findOneAndUpdate({
-      _id: id,
-      owner: user._id
-    }, updatingProduct, updateOptions);
-    if (updatedProduct) {
-      return res.json(updatedProduct);
-    }
-    throw createError(400, `Product update error ${updatingProduct}`);
-  } catch (err) {
-    return next(err);
-  }
-};
+
 
 module.exports = {
   getProduct,
   postProduct,
   putProduct,
-  deleteProduct,
-  patchProduct
+  deleteProduct
 };

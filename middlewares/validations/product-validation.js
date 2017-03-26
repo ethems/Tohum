@@ -1,5 +1,5 @@
 exports.getProduct = async(req, res, next) => {
-  req.checkParams('id').notEmpty().isObjectId();
+  req.checkParams('id').notEmpty().isMongoId();
   const errors = await req.getValidationResult();
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -13,6 +13,7 @@ exports.postProduct = async(req, res, next) => {
   req.checkBody('name').notEmpty();
   req.checkBody('category').notEmpty();
   req.checkBody('address').isAddress();
+  req.checkBody('active').optional().isBoolean();
   const errors = await req.getValidationResult();
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -23,10 +24,11 @@ exports.postProduct = async(req, res, next) => {
 };
 
 exports.putProduct = async(req, res, next) => {
-  req.checkParams('id').notEmpty().isObjectId();
-  req.checkBody('name').notEmpty();
-  req.checkBody('category').notEmpty();
-  req.checkBody('address').isAddress();
+  req.checkParams('id').notEmpty().isMongoId();
+  req.checkBody('name').optional().notEmpty();
+  req.checkBody('category').optional().notEmpty();
+  req.checkBody('address').optional().isAddress();
+  req.checkBody('active').optional().isBoolean();
   const errors = await req.getValidationResult();
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -37,7 +39,7 @@ exports.putProduct = async(req, res, next) => {
 };
 
 exports.deleteProduct = async(req, res, next) => {
-  req.checkParams('id').notEmpty().isObjectId();
+  req.checkParams('id').notEmpty().isMongoId();
   const errors = await req.getValidationResult();
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -47,14 +49,4 @@ exports.deleteProduct = async(req, res, next) => {
   next();
 };
 
-exports.patchProduct = async(req, res, next) => {
-  req.checkParams('id').notEmpty().isObjectId();
-  const errors = await req.getValidationResult();
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      error: errors.array()
-    });
-  }
-  next();
-};
 

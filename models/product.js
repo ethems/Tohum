@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 const stringUtil = require('../lib/utils/string-util');
 const address = require('./subdocuments/address');
+const createError = require('http-errors');
+
 
 const Schema = mongoose.Schema;
 
@@ -43,6 +45,8 @@ const productSchema = new Schema({
   },
   modifiedDate: Date
 });
+
+// Hooks
 productSchema.pre('validate', function(next) {
   const product = this;
   if (!product.createdDate) {
@@ -56,6 +60,36 @@ productSchema.pre('save', function(next) {
   product.modifiedDate = moment.utc();
   next();
 });
+
+// Instance methods
+productSchema.methods.updateName = function(name) {
+  if (typeof name === 'undefined') {
+    return;
+  } else if (name === null) {
+    throw new createError.BadRequest();
+  }
+  this.name = name;
+};
+productSchema.methods.updateActive = function(active) {
+  if (typeof active === 'undefined') {
+    return;
+  }
+  this.active = active;
+};
+productSchema.methods.updateCategory = function(category) {
+  if (typeof category === 'undefined') {
+    return;
+  } else if (category === null) {
+    throw new createError.BadRequest();
+  }
+  this.category = category;
+};
+productSchema.methods.updateAddress = function(address) {
+  if (typeof address === 'undefined') {
+    return;
+  }
+  this.address = address;
+};
 
 const ProductModel = mongoose.model('Product', productSchema);
 
