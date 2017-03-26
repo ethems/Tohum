@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const stringUtil = require('../lib/utils/string-util');
 const moment = require('moment');
+const createError = require('http-errors');
+
 
 const Schema = mongoose.Schema;
 
@@ -51,10 +53,17 @@ productCategorySchema.statics.findByIdAndPopulate = function(productCategoryId) 
   });
 };
 
+
+// Instance methods
+productCategorySchema.methods.updateName = function(name) {
+  if (typeof name === 'undefined') {
+    return;
+  } else if (name === null) {
+    throw new createError.BadRequest();
+  }
+  this.name = name;
+};
+
 const ProductCategoryModel = mongoose.model('ProductCategory', productCategorySchema);
-
-
-
-
 
 module.exports = ProductCategoryModel;

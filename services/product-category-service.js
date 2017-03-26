@@ -16,7 +16,7 @@ async function buildSubgraph(root) {
       nodesByParent.set(nodes[i].parent, [
         ...parentNodeValue,
         nodes[i]
-      ])
+      ]);
     }
   }
   return nodesByParent;

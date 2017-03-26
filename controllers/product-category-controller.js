@@ -26,7 +26,6 @@ const getProductCategory = async(req, res, next) => {
 const postProductCategory = async(req, res, next) => {
   // newParentId is for new parentId
   const {
-    name,
     newParentId
   } = req.body;
   // create with just name property
@@ -36,7 +35,10 @@ const postProductCategory = async(req, res, next) => {
     const createdCategory = await ProductCategory.create(creatingProductCategory);
     if (newParentId) {
       // Update parent ,and ancestors
-      await productCategoryService.addCategory(createdCategory._id, newParentId);
+      const foundParentProductCategory = await ProductCategory.findById(newParentId).exec();
+      if (foundParentProductCategory) {
+        await productCategoryService.addCategory(createdCategory._id, newParentId);
+      }
     }
     const foundProductCategory = await ProductCategory.findByIdAndPopulate(createdCategory._id).exec();
     return res.json(foundProductCategory);
@@ -53,16 +55,12 @@ const putProductCategory = async(req, res, next) => {
     newParentId
   } = req.body;
   // update just name property
-  const updatingProductCategory = _.pick(req.body, ['name']);
-  const updateOptions = {
-    new: true,
-    upsert: false
-  };
+  const requestBody = _.pick(req.body, ['name']);
   try {
     // update ProductCategory
-    const updatedProduct = await ProductCategory.findOneAndUpdate({
-      _id: id
-    }, updatingProductCategory, updateOptions);
+    const updatingProduct = await ProductCategory.findById(id).exec();
+    updatingProduct.updateName(requestBody.name);
+    const updatedProduct = await updatingProduct.save();
     if (newParentId) {
       // if there is newParentId,  update parent and ancestors 
       if (updatedProduct.parent) {
@@ -92,7 +90,7 @@ const deleteProductCategory = async(req, res, next) => {
     const foundProductCategories = await ProductCategory.find({
       ancestors: id
     }).exec();
-    if (foundProductCategories && foundProductCategories.length >0) {
+    if (foundProductCategories && foundProductCategories.length > 0) {
       const error = new Error(`This productCategory ${id} can not be deleted`);
       error.statusCode = 400;
       throw error;

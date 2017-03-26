@@ -7,6 +7,8 @@ exports.signup = async(req, res, next) => {
       error: errors.array()
     });
   }
+  req.sanitizeBody('email').trim();
+  req.sanitizeBody('password').trim();
   next();
 };
 
@@ -19,5 +21,7 @@ exports.signin = async(req, res, next) => {
       error: errors.array()
     });
   }
+  req.sanitizeBody('email').trim();
+  req.sanitizeBody('password').trim();
   next();
 };

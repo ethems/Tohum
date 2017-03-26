@@ -25,20 +25,27 @@ const putUser = async(req, res, next) => {
   const {
     user
   } = req;
-  const opts = {
-    new: true,
-    upsert: false
-  };
-  const updatingUser = _.pick(req.body, ['email', 'name', 'addresses', 'password']);
+  const requestBody = _.pick(req.body, ['email', 'name', 'addresses', 'password']);
   try {
-    if (user._id === id) {
-      const updatedUser = await User.findOneAndUpdate({
-        _id: id
-      }, updatingUser, opts);
+    // Check id and id of requester
+    // if not return unauthorized response 
+    // For MongoDB ID  use equals !!!!
+    if (user._id.equals(id)) {
+      // Update User
+      const updatingUser= await User.findById(id).exec();
+      // update methods
+      updatingUser.updateEmail(requestBody.email);
+      updatingUser.updatePassword(requestBody.password);
+      updatingUser.updateName(requestBody.name);
+      updatingUser.updateAddresses(requestBody.addresses);
+      // save !
+      await updatingUser.save();
+      // return refresh user
+      const updatedUser = await User.safeFindById(id).exec();
       if (updatedUser) {
         return res.json(updatedUser);
       }
-      throw createError(400, `User update error ${updatingUser}`);
+      throw createError(400, `User update error ${requestBody}`);
     } else {
       throw createError(401, `There is no authrozation to change user  ${id}`);
     }
