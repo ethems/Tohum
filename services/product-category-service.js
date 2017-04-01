@@ -6,14 +6,14 @@ const logger = require('../lib/logger');
 async function buildSubgraph(root) {
   let nodesByParent = new Map();
   const nodes = await ProductCategory.find({
-    ancestors: root._id
-  });
+    ancestorIDs: root._id
+  }).exec();
   for (let i = 0, len = nodes.length; i < len; i++) {
-    const parentNodeValue = nodesByParent.get(nodes[i].parent);
+    const parentNodeValue = nodesByParent.get(String(nodes[i].parentID));
     if (!parentNodeValue) {
-      nodesByParent.set(nodes[i].parent, [nodes[i]]);
+      nodesByParent.set(String(nodes[i].parentID), [nodes[i]]);
     } else {
-      nodesByParent.set(nodes[i].parent, [
+      nodesByParent.set(String(nodes[i].parentID), [
         ...parentNodeValue,
         nodes[i]
       ]);
@@ -22,23 +22,28 @@ async function buildSubgraph(root) {
   return nodesByParent;
 }
 async function updateNodeAndDescendents(nodesByParent, node, parent) {
-  const parentAncestors = parent ?
-    parent.ancestors : [];
-  const parentId = parent ? parent.id : null;
-  await ProductCategory.update({
+
+
+  const parentAncestorIDs = parent ?
+    parent.ancestorIDs : [];
+  const parentID = parent ? parent._id : null;
+  const updatedNode=await ProductCategory.findOneAndUpdate({
     _id: node._id
   }, {
     $set: {
-      ancestors: [
-        ...parentAncestors,
-        parentId
+      ancestorIDs: [
+        ...parentAncestorIDs,
+        parentID
       ],
-      parent: parentId
+      parentID
     }
+  }, {
+    new: true,
+    upsert: false
   }).exec();
-  const parentNodeValue = nodesByParent.get(node._id) || [];
+  const parentNodeValue = nodesByParent.get(String(updatedNode.id)) || [];
   for (let i = 0, len = parentNodeValue.length; i < len; i++) {
-    await updateNodeAndDescendents(nodesByParent, parentNodeValue[i], node);
+    await updateNodeAndDescendents(nodesByParent, parentNodeValue[i], updatedNode);
   }
 }
 module.exports = {
@@ -47,29 +52,28 @@ module.exports = {
     const flattenCategoriesByParent = await buildSubgraph(category);
     await updateNodeAndDescendents(flattenCategoriesByParent, category, null);
   },
-  addCategory: async function(id, parentId) {
+  addCategory: async function(id, parentID) {
     // Use when category dont have any children categories
     // It is ideal when first initialization of the category
-    if (!id || !parentId) {
+    if (!id || !parentID) {
       logger.error('There is null paramaters when called addCategory');
       throw new TypeError('There is null paramaters when called addCategory');
     }
-    const parent = await ProductCategory.findById(parentId).exec();
+    const parent = await ProductCategory.findById(parentID).exec();
     if (!parent) {
       logger.error('There is no parent category to add new category');
       throw new Error('There is no parent category to add new category');
     }
-    const parentAncestors = parent ?
-      parent.ancestors : [];
+    const parentAncestorIDs = parent.ancestorIDs;
     await ProductCategory.update({
       _id: id
     }, {
       $set: {
-        ancestors: [
-          ...parentAncestors,
-          parentId
+        ancestorIDs: [
+          ...parentAncestorIDs,
+          parentID
         ],
-        parent: parentId
+        parentID
       }
     }).exec();
   },

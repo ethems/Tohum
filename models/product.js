@@ -25,18 +25,16 @@ const productSchema = new Schema({
     type: Boolean,
     default: false
   },
-  category: {
+  categoryID: {
     type: Schema.Types.ObjectId,
-    ref: 'ProductCategory',
     required: true
   },
   address: {
     type: address,
     required: true
   },
-  owner: {
+  ownerID: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
     required: true
   },
   createdDate: {
@@ -44,8 +42,24 @@ const productSchema = new Schema({
     required: true
   },
   modifiedDate: Date
+}, {
+  toJSON: {
+    virtuals: true
+  }
 });
-
+// Virtuals
+productSchema.virtual('category', {
+  ref: 'ProductCategory',
+  localField: 'categoryID',
+  foreignField: '_id',
+  justOne: true
+});
+productSchema.virtual('owner', {
+  ref: 'User',
+  localField: 'ownerID',
+  foreignField: '_id',
+  justOne: true
+});
 // Hooks
 productSchema.pre('validate', function(next) {
   const product = this;

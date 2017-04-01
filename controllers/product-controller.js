@@ -8,7 +8,7 @@ const getProduct = async(req, res, next) => {
     id
   } = req.params;
   try {
-    const foundProduct = await Product.findById(id).exec();
+    const foundProduct = await Product.findById(id).populate('category').populate('owner').exec();
     if (foundProduct) {
       return res.json(foundProduct);
     }
@@ -33,7 +33,7 @@ const deleteProduct = async(req, res, next) => {
   try {
     const deletedProduct = await Product.findOneAndUpdate({
       _id: id,
-      owner: user._id
+      ownerID: user._id
     }, {
       $set: {
         isDeleted: true
@@ -53,9 +53,9 @@ const postProduct = async(req, res, next) => {
   const {
     user
   } = req;
-  const requestBody = _.pick(req.body, ['name', 'active', 'category', 'address']);
+  const requestBody = _.pick(req.body, ['name', 'active', 'categoryID', 'address']);
   const creatingProduct = Object.assign({}, requestBody, {
-    owner: user._id
+    ownerID: user._id
   });
   try {
     const createdProduct = await Product.create(creatingProduct);
@@ -75,12 +75,12 @@ const putProduct = async(req, res, next) => {
   const {
     user
   } = req;
-  const requestBody = _.pick(req.body, ['name', 'active', 'category', 'address']);
+  const requestBody = _.pick(req.body, ['name', 'active', 'categoryID', 'address']);
   try {
     // Owner is importnat because another user might update anothers' products  
     const updatingProduct = await Product.findOne({
       _id: id,
-      owner: user._id
+      ownerID: user._id
     }).exec();
     updatingProduct.updateName(requestBody.name);
     updatingProduct.updateActive(requestBody.active);
