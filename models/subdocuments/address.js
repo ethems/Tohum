@@ -11,11 +11,17 @@ const addressSchema = new Schema({
   streetLine2: {
     type: String
   },
+  county: {
+    // Ilce
+    type: String,
+  },
   city: {
+    // Il
     type: String,
     required: true
   },
   zip: {
+    // Zip kodu
     type: String
   },
   state: String,

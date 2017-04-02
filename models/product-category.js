@@ -13,21 +13,36 @@ const productCategorySchema = new Schema({
     set: stringUtil.capitalize,
     unique: true
   },
-  parent: {
-    type: Schema.Types.ObjectId,
-    ref: 'productCategory'
+  parentID: {
+    type: Schema.Types.ObjectId
   },
-  ancestors: [{
-    type: Schema.Types.ObjectId,
-    ref: 'productCategory'
+  ancestorIDs: [{
+    type: Schema.Types.ObjectId
   }],
   createdDate: {
     type: Date,
     required: true
   },
   modifiedDate: Date
+}, {
+  toJSON: {
+    virtuals: true
+  }
 });
 
+// Virtuals
+productCategorySchema.virtual('parent', {
+  ref: 'productCategory',
+  localField: 'parentID',
+  foreignField: '_id',
+  justOne: true
+});
+productCategorySchema.virtual('ancestors', {
+  ref: 'productCategory',
+  localField: 'ancestorIDs',
+  foreignField: '_id'
+});
+// Hooks
 productCategorySchema.pre('validate', function(next) {
   const productCategory = this;
   if (!productCategory.createdDate) {

@@ -55,7 +55,6 @@ describe('PRODUCT CONTROLLER', () => {
       });
       let response = httpMocks.createResponse();
       ProductController.getProduct(request, response, () => {});
-      console.log(response);
       done();
     });
   });
