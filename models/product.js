@@ -60,6 +60,11 @@ productSchema.virtual('owner', {
   foreignField: '_id',
   justOne: true
 });
+productSchema.virtual('price', {
+  ref: 'ProductPrice',
+  localField: '_id',
+  foreignField: 'productID'
+});
 // Hooks
 productSchema.pre('validate', function(next) {
   const product = this;
@@ -103,6 +108,9 @@ productSchema.methods.updateAddress = function(address) {
     return;
   }
   this.address = address;
+};
+productSchema.methods.setIsDeleted = function() {
+  this.isDeleted = true;
 };
 
 const ProductModel = mongoose.model('Product', productSchema);

@@ -1,3 +1,5 @@
+const createError = require('http-errors');
+
 module.exports = function(req, res, next) {
   const {
     admin
@@ -5,8 +7,6 @@ module.exports = function(req, res, next) {
   if (admin) {
     return next();
   } else {
-    return res.status(401).send({
-      error: 'User is not admin'
-    });
+    return next(createError(401, 'User is not admin'));
   }
 };

@@ -8,6 +8,9 @@ const getProduct = async(req, res, next) => {
     id
   } = req.params;
   try {
+    // TODO !!!!!
+    // ADD Active Price
+    // !!!!
     const foundProduct = await Product.findById(id).populate('category').populate('owner').exec();
     if (foundProduct) {
       return res.json(foundProduct);
@@ -21,7 +24,7 @@ const getProduct = async(req, res, next) => {
 const deleteProduct = async(req, res, next) => {
   // soft-delete
   const {
-    user
+    product
   } = req;
   const {
     id
@@ -31,14 +34,8 @@ const deleteProduct = async(req, res, next) => {
     upsert: false
   };
   try {
-    const deletedProduct = await Product.findOneAndUpdate({
-      _id: id,
-      ownerID: user._id
-    }, {
-      $set: {
-        isDeleted: true
-      }
-    }, opts).exec();
+    product.setIsDeleted();
+    const deletedProduct = await product.save();
     if (deletedProduct) {
       return res.sendStatus(202);
     } else {
@@ -70,27 +67,20 @@ const postProduct = async(req, res, next) => {
 
 const putProduct = async(req, res, next) => {
   const {
-    id
-  } = req.params;
-  const {
-    user
+    product
   } = req;
   const requestBody = _.pick(req.body, ['name', 'active', 'categoryID', 'address']);
   try {
-    // Owner is importnat because another user might update anothers' products  
-    const updatingProduct = await Product.findOne({
-      _id: id,
-      ownerID: user._id
-    }).exec();
-    updatingProduct.updateName(requestBody.name);
-    updatingProduct.updateActive(requestBody.active);
-    updatingProduct.updateCategory(requestBody.category);
-    updatingProduct.updateAddress(requestBody.address);
-    const updatedProduct = await updatingProduct.save();
+    // Owner is importnat because another user might update anothers' products
+    product.updateName(requestBody.name);
+    product.updateActive(requestBody.active);
+    product.updateCategory(requestBody.category);
+    product.updateAddress(requestBody.address);
+    const updatedProduct = await product.save();
     if (updatedProduct) {
       return res.json(updatedProduct);
     }
-    throw createError(400, `Product update error ${updatingProduct}`);
+    throw createError(400, `Product update error ${product}`);
   } catch (err) {
     return next(err);
   }
