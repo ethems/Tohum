@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const config = require('./config');
 const logger = require('./lib/logger');
 
@@ -8,7 +9,7 @@ const app = express();
 require('./lib/db');
 
 // APP ROUTER
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(config.get('app:siteRoot'), require('./lib/app-router'));
 
 const server = app.listen(config.get('PORT'), (error) => {
