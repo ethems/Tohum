@@ -1,6 +1,6 @@
 const path = require('path');
-const webpack = require('webpack');
-
+const precss = require('precss');
+const cssnext = require('postcss-cssnext');
 
 module.exports = {
   context: path.resolve(__dirname, 'client'),
@@ -11,18 +11,45 @@ module.exports = {
   },
   module: {
     rules: [{
+      loader: 'babel-loader',
       test: /\.js|.jsx?$/,
-      exclude: [
-        path.join(__dirname, 'node_modules/')
-      ],
-      query: {
+      exclude: /node_modules/,
+      options: {
         presets: [
           ['es2015', {
             modules: false
           }], 'react'
-        ]
-      },
-      loader: 'babel-loader'
+        ],
+        plugins: ['transform-class-properties', 'transform-object-rest-spread']
+      }
+    }, {
+      test: /\.css$/,
+      exclude: /node_modules/,
+      use: ['style-loader', 'css-loader?importLoaders=1', {
+        loader: 'postcss-loader',
+        options: {
+          plugins: () => [
+            precss,
+            cssnext
+          ]
+        }
+      }]
+    }, {
+      test: /\.scss$/,
+      exclude: /node_modules/,
+      use: ['style-loader', 'css-loader?importLoaders=1', {
+        loader: 'postcss-loader',
+        options: {
+          plugins: () => [
+            precss,
+            cssnext
+          ]
+        }
+      }, 'sass-loader']
+    }, {
+      test: /\.(png|jpg|ttf|eot)$/,
+      exclude: /node_modules/,
+      loader: 'url-loader?limit=100000'
     }]
   },
   resolve: {

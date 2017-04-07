@@ -1,3 +1,5 @@
+require('./index.scss');
+
 const aaTest=(str=`Hello world` )=>{
     return str;
 };
