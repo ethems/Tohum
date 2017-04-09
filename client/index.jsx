@@ -4,5 +4,10 @@ const aaTest=(str=`Hello world` )=>{
     return str;
 };
 
-let a = 'Hello world';
+let b="xx";
+let a = `Hello world ${b}`;
+
+
 console.log(aaTest());
+
+

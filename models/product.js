@@ -11,8 +11,7 @@ const productSchema = new Schema({
   name: {
     type: String,
     required: true,
-    set: stringUtil.capitalize,
-    unique: true
+    set: stringUtil.capitalize
   },
   active: {
     // Product might be active or inactive in its lifetime.

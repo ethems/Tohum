@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const Product = require('../models/product');
 const User = require('../models/user');
 const createError = require('http-errors');
 
@@ -18,6 +19,20 @@ const getUser = async(req, res, next) => {
   }
 };
 
+const getProductsByUser = async(req, res, next) => {
+  const {
+    id
+  } = req.params;
+  try {
+    const products = await Product.find({
+      ownerID: id
+    }).exec();
+    res.json(products);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const putUser = async(req, res, next) => {
   const {
     id
@@ -32,7 +47,7 @@ const putUser = async(req, res, next) => {
     // For MongoDB ID  use equals !!!!
     if (user._id.equals(id)) {
       // Update User
-      const updatingUser= await User.findById(id).exec();
+      const updatingUser = await User.findById(id).exec();
       // update methods
       updatingUser.updateEmail(requestBody.email);
       updatingUser.updatePassword(requestBody.password);
@@ -58,5 +73,6 @@ const putUser = async(req, res, next) => {
 
 module.exports = {
   getUser,
+  getProductsByUser,
   putUser
 };

@@ -9,6 +9,17 @@ exports.getUser = async(req, res, next) => {
   next();
 };
 
+exports.getProductsByUser = async(req, res, next) => {
+  req.checkParams('id').notEmpty().isMongoId();
+  const errors = await req.getValidationResult();
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      error: errors.array()
+    });
+  }
+  next();
+};
+
 
 exports.putUser = async(req, res, next) => {
   req.checkParams('id').notEmpty().isMongoId();
