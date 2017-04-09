@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const Product = require('../models/product');
 const ProductCategory = require('../models/product-category');
 const productCategoryService = require('../services/product-category-service');
-const stringUtil= require('../lib/utils/string-util');
+const stringUtil = require('../lib/utils/string-util');
 
 const getProductCategory = async(req, res, next) => {
   const {
@@ -22,6 +23,19 @@ const getProductCategory = async(req, res, next) => {
   }
 };
 
+const getProductsByProductCategory = async(req, res, next) => {
+  const {
+    id
+  } = req.params;
+  try {
+    const products = await Product.find({
+      categoryID: id
+    }).exec();
+    res.json(products);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 
 const postProductCategory = async(req, res, next) => {
@@ -112,5 +126,6 @@ module.exports = {
   getProductCategory,
   postProductCategory,
   putProductCategory,
-  deleteProductCategory
+  deleteProductCategory,
+  getProductsByProductCategory
 };

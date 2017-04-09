@@ -9,6 +9,17 @@ exports.getProductCategory = async(req, res, next) => {
   next();
 };
 
+exports.getProductsByProductCategory = async(req, res, next) => {
+  req.checkParams('id').notEmpty().isMongoId();
+  const errors = await req.getValidationResult();
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      error: errors.array()
+    });
+  }
+  next();
+};
+
 exports.postProductCategory = async(req, res, next) => {
   req.checkBody('name').notEmpty();
   req.checkBody('parentId').optional().isMongoId();
