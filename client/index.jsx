@@ -1,13 +1,10 @@
-require('./index.scss');
+import React from 'react';
+import { render } from 'react-dom';
 
-const aaTest=(str=`Hello world` )=>{
-    return str;
-};
+import configureStore from './redux/configure-store';
 
-let b="xx";
-let a = `Hello world ${b}`;
+import App from './components/app.jsx';
 
+const store = configureStore();
 
-console.log(aaTest());
-
-
+render(<App store={store} />, document.getElementById('app'));
